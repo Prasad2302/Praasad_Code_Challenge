@@ -1,0 +1,147 @@
+1.	Retrieve the names of all artists along with the number of artworks they have in the gallery, and list them in descending order of the number of artworks.
+select a.name, count(b.artworkID)
+from artists as a
+join artworks as b on 
+a.artistID = b.artistID
+group by 
+a.artistID , a.name  
+order by count(b.artworkID) desc;
+
+2. List the titles of artworks created by artists from 'Spanish' and 'Dutch' nationalities, and order them by the year in ascending order. 
+Select a.title, b.nationality, a.year 
+from artworks as a 
+join artists as b on b.artistID = a.artistID
+where nationality = 'spanish' or nationality = 'dutch'
+order by a.year asc;
+
+3. Find the names of all artists who have artworks in the 'Painting' category, and the number of artworks they have in this category. 
+select a.name, count(c.artworkID)
+from artists as a
+join artworks as c on a.artistID = c.artistID
+join categories as b on  b.categoryID= c.categoryID
+where b.name = 'painting'
+group by a.artistID , a.name
+order by count(c.artworkid) desc;
+
+4. List the names of artworks from the 'Modern Art Masterpieces' exhibition, along with their artists and categories.
+Select a.title as nameofartwork, b.name as artistname, c.name as categoryname
+From artworks as a 
+join ExhibitionArtworks as ea on a.artworkID = ea.artworkID
+Join exhibitions as e on ea.exhibitionID = e.exhibitionID
+Join artists as b on b.artistid = a.artistID
+Join categories c on a.categoryid = c.categoryID
+where e.title = 'modern art masterpieces';
+
+
+
+ 5. Find the artists who have more than two artworks in the gallery. 
+select a.artistid, a.name, count(b.artworkID) as Numberofartworks
+from artists as a
+join artworks as b on a.artistID = b.artistid
+group by a.artistid
+having Numberofartworks > 2;
+
+6. Find the titles of artworks that were exhibited in both 'Modern Art Masterpieces' and 'Renaissance Art' exhibitions
+Select aw.title
+From exhibitionartworks as ea
+Join artworks as aw on ea.artworkID = aw.artworkID
+Join exhibitions as e on ea.exhibitionID = e.exhibitionID 
+Where e.title = 'modern art masterpieces' OR e.title = 'renaissance art';
+
+7. Find the total number of artworks in each category
+select c.name as categoryname, count(aw.artworkid) as numberofartwork
+from artworks as aw
+join categories as c on aw.categoryid = c.categoryid
+group by categoryname;
+
+
+
+
+ 8. List artists who have more than 3 artworks in the gallery. 
+Select a.artistID, a.name, count(aw.artworkID) as numberofArtworks
+From artists as a
+Join artworks as aw on a.artistid = aw.artistid
+group by a.artistID, a.name
+having numberofArtworks > 3;
+
+9. Find the artworks created by artists from a specific nationality (e.g., Spanish).
+Select aw.artworkid, aw.title,  a.name, a.nationality
+From artworks as aw
+Join artists as a on aw.artistID = a.artistID
+where nationality = 'Spanish';  -- specify nationality here
+
+ 10. List exhibitions that feature artwork by both Vincent van Gogh and Leonardo da Vinci.
+Select e.exhibitionID, e.title 
+from exhibitionartworks as ea
+Join artworks as aw on ea.artworkID = aw.artworkID
+Join artists as a on aw.artistid = a.artistid
+Join exhibitions as e on ea.exhibitionID = e.exhibitionID
+Where a.name = 'Vincent van Gogh' and 'Leonardo da Vinci';  
+
+ 11. Find all the artworks that have not been included in any exhibition. 
+Select aw.artworkID, aw.title
+From artworks as aw
+left Join exhibitionartworks as ea on ea.artworkid = aw.artworkid
+Where ea.exhibitionID is null;
+
+12. List artists who have created artworks in all available categories. 
+Select a.name 
+From artists as a 
+Join artworks as aw on a.artistID = aw.artistID
+Group by a.name 
+Having count(distinct aw.categoryid ) = (select count(distinct categoryID) from categories);
+
+
+13. List the total number of artworks in each category.
+Select  c.name, count(aw.artworkID) as totalArtworks
+From categories c 
+Join artworks as aw on c.categoryID = aw.categoryID 
+Group by c.name
+
+ 14. Find the artists who have more than 2 artworks in the gallery. 
+Select a.name as artistName, count(aw.artworkID) as NumberofArtworks
+From artists as a 
+Join artworks as aw on a.artistID = aw.artistID
+Group by artistName
+Having NumberofArtworks > 2;
+
+15. List the categories with the average year of artworks they contain, only for categories with more than 1 artwork. 
+Select c.name, avg(aw.year) as avgrageYear
+From categories as c
+Join artworks as aw on c.categoryID = aw.categoryID
+Group by c.name
+Having count(aw.artworkID > 1);
+
+16. Find the artworks that were exhibited in the 'Modern Art Masterpieces' exhibition.
+select aw.title
+from artworks as aw
+join exhibitionArtworks as ea on aw.artworkid = ea.artworkID
+join exhibitions as e on ea.exhibitionID = e.exhibitionID
+where e.title = 'Modern Art Masterpieces';
+
+ 17. Find the categories where the average year of artworks is greater than the average year of all artworks. 
+Select c.categoryID, c.name, avg(aw.year) as AvgYear
+From categories as c
+Join artworks as aw on c.categoryID = aw.categoryID
+Group by c.categoryID, c.name 
+Having AvgYear > (select avg(Year) from artworks);
+
+
+18. List the artworks that were not exhibited in any exhibition. 
+Select aw.artworkID 
+From artworks as aw
+Join exhibitionartworks as ea on aw.artworkID = ea.artworkID
+Where ea.exhibitionID is null;
+
+
+19. Show artists who have artworks in the same category as "Mona Lisa."
+Select a.artistID
+From artists as a
+Join artworks as aw on a.artistID = aw.artistID 
+Where aw.categoryID = (select categoryID from artworks where title = 'mona lisa');
+
+ 20. List the names of artists and the number of artworks they have in the gallery.
+Select a.name, count(aw.artworkID) as numberofArtworks
+From artists as a 
+Join artworks as aw on a.artistID = aw.artistID
+Group by a.name;
